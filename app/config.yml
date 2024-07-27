@@ -1,23 +1,24 @@
-version: 1
-disable_existing_loggers: false
-formatters:
-    simple:
-        format: '[%(asctime)s][%(levelname)s][%(module)s] - %(message)s'
-        datefmt: '%Y-%m-%d %H:%M:%S'
-handlers:
-    console:
-        class: logging.StreamHandler
-        formatter: simple
+logging:
+    version: 1
+    disable_existing_loggers: false
+    formatters:
+        simple:
+            format: '[%(asctime)s][%(levelname)s][%(module)s] - %(message)s'
+            datefmt: '%Y-%m-%d %H:%M:%S'
+    handlers:
+        console:
+            class: logging.StreamHandler
+            formatter: simple
+            level: DEBUG
+            stream: ext://sys.stdout
+        file:
+            class: logging.handlers.TimedRotatingFileHandler
+            formatter: simple
+            level: INFO
+            filename: application.log
+            encoding: utf-8
+            when: MIDNIGHT
+            backupCount: 7
+    root:
         level: DEBUG
-        stream: ext://sys.stdout
-    file:
-        class: logging.handlers.TimedRotatingFileHandler
-        formatter: simple
-        level: INFO
-        filename: application.log
-        encoding: utf-8
-        when: MIDNIGHT
-        backupCount: 7
-root:
-    level: DEBUG
-    handlers: [console, file]
+        handlers: [console, file]
