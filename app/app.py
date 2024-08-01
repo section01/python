@@ -1,23 +1,19 @@
 from flask import Flask, render_template
+from logging import getLogger
 from logging.config import dictConfig
-import yaml
+from yaml import load, Loader
 
-# コンフィグ読込
-with open('./app/config.yml', 'r') as yml:
-    config = yaml.load(yml, Loader=yaml.Loader)
+with open('./app/conf.yml', 'r') as yml:
+    config = load(yml, Loader=Loader)
 
-# ロギング設定
 dictConfig(config['logging'])
+logger = getLogger()
 
-# FLASKインスタンス生成
 app = Flask(__name__, static_folder='/')
 
-"""
-Function:
-    初期画面を表示する
-Returns:
-    初期画面を返す
-"""
 @app.route('/')
 def main():
     return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
