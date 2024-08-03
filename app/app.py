@@ -4,7 +4,7 @@ from app import *
 
 @app.route('/')
 def main():
-    result = con.execute(text('select * from sample.test'))
+    result = connect.execute(text('select * from sample.test'))
     print(result.all())
     
     return render_template('index.html')
