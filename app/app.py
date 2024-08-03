@@ -1,19 +1,10 @@
-from flask import Flask, render_template
-from logging import getLogger
-from logging.config import dictConfig
-from yaml import load, Loader
-
-with open('./app/conf.yml', 'r') as yml:
-    config = load(yml, Loader=Loader)
-
-dictConfig(config['logging'])
-logger = getLogger()
-
-app = Flask(__name__, static_folder='/')
+from flask import render_template
+from sqlalchemy import text
+from app import *
 
 @app.route('/')
 def main():
+    result = con.execute(text('select * from sample.test'))
+    print(result.all())
+    
     return render_template('index.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
