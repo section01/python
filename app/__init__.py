@@ -1,14 +1,13 @@
 import yaml
-import dotenv
 import os
 import logging
 import logging.config
 import sqlalchemy
+import atexit
 from flask import Flask
 
 with open('./app/config.yml', 'r') as yml:
     config = yaml.load(yml, Loader=yaml.Loader)
-dotenv.load_dotenv(override=True)
 
 app = Flask(__name__, static_folder='/static')
 
@@ -20,5 +19,7 @@ url = '{}://{}:{}@{}:{}/{}'.format(os.getenv('DIALECT'), os.getenv('USER'), os.g
 engine = sqlalchemy.create_engine(url, client_encoding='utf-8', echo=False)
 connect = engine.connect()
 
+close = lambda: connect.close
+atexit.register(close)
 
 __all__ = ['app', 'logger', 'connect']
