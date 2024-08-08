@@ -1,6 +1,5 @@
 from flask import render_template
-from sqlalchemy import text
-from . import *
+from . import app
 
 @app.route('/')
 def main():

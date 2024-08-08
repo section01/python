@@ -1,31 +1,18 @@
-import yaml
-import logging
-import logging.config
-import sqlalchemy
-import atexit
+from yaml import load, Loader
+from logging.config import dictConfig
 from flask import Flask
+from sqlalchemy import create_engine
+from atexit import register
 
-# YAMLファイルを読込
 with open('./app/config.yml', 'r') as yml:
-    config = yaml.load(yml, Loader=yaml.Loader)
+    config = load(yml, Loader=Loader)
 
-# アプリケーションインスタンスを作成
-app = Flask(__name__, static_folder='/static')
+dictConfig(config['logging'])
 
-# ロガーを読込
-logging.config.dictConfig(config['logging'])
-logger = logging.getLogger()
+app = Flask(__name__, static_folder='./static', template_folder='./templates')
+engine = create_engine(url = 'postgresql://postgres:passw0rd@localhost:5432/python', client_encoding='utf-8', echo=False)
 
-# DBエンジンを作成
-# TODO ENVファイルから読み込んでも良いが面倒なので直接設定（ENVファイルからの読み込みはos.getenvを利用）
-engine = sqlalchemy.create_engine(url = 'postgresql://postgres:passw0rd@localhost:5432/python', client_encoding='utf-8', echo=False)
+register(lambda: engine.dispose())
 
-# アプリケーション終了時にDBエンジンを破棄
-atexit.register(lambda: engine.dispose())
-
-# 公開するインスタンス、メソッドなどを設定
-__all__ = ['app', 'logger', 'engine']
-
-# おまじない
 if __name__ == '__main__':
     app.run(debug=True)
